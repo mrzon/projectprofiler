@@ -1,0 +1,103 @@
+{
+  "author":"Emerson Chan Simbolon",
+  "createdate":"10-12-2014 21:21",
+  "projects":[
+    {
+      "name":"Project Profiler",
+      "description":"Run sets of program that used by a project",
+      "key":"projectprofiler",
+      "applications":[
+        {
+          "name":"Chrome",
+          "type":"app",
+          "category":"Internet Browser",
+          "location":"/Applications/Chrome.app",
+          "documents":[
+            {
+              "name":"Research Purpose",
+              "location":"http://google.com"
+            }
+            ]
+        },{
+          "name":"Sublime Text",
+          "type":"app",
+          "category":"Text Editor",
+          "location":"/Applications/Sublime Text.app",
+          "documents":[
+            {
+              "name":"Working Directory",
+              "location":"/Users/Emerson/Projects/projectprofiler"
+            }
+            ]
+        },{
+          "name":"Git Pull",
+          "type":"cl",
+          "command":"git pull origin develop",
+          "workingdirectory":"/Users/Emerson/Projects/projectprofiler",
+          "command-off":null
+        },{
+          "name":"Apache",
+          "type":"cl",
+          "command":"apache start",
+          "workingdirectory":null,
+          "command-off":"apache stop"
+        }
+        ]
+    },
+    {
+      "name":"ChurchHub",
+      "description":"App for sharing info about Church activities among certain location",
+      "key":"churchhub",
+      "applications":[
+        {
+          "name":"Chrome",
+          "type":"app",
+          "category":"Internet Browser",
+          "location":"/Applications/Google\\ Chrome.app",
+          "documents":[
+            {
+              "name":"Research Purpose",
+              "location":"http://google.com"
+            }
+            ]
+        },{
+          "name":"Sublime Text",
+          "type":"app",
+          "category":"Text Editor",
+          "location":"/Applications/Sublime Text.app",
+          "documents":[
+            {
+              "name":"Working Directory",
+              "location":"/Users/Emerson/Projects/churchub"
+            }
+            ]
+        },{
+          "name":"Git Pull",
+          "type":"cl",
+          "command":"git pull origin develop",
+          "workingdirectory":"/Users/Emerson/Projects/churchub",
+          "command-off":null
+        }
+        ]
+    }, {
+      "name":"Miscelaneous",
+      "description":"Just sets of program that not associated with each other",
+      "key":"misc",
+      "applications":[
+        {
+          "name":"Greetings from Shire",
+          "type":"cl",
+          "category":null,
+          "workingdirectory":null,
+          "command":"say Hallo good day sir"
+        }
+      ]
+    },
+    {
+      "name":"Dodo",
+      "description":"App for sharing info about Church activities among certain location",
+      "key":"dodo",
+      "applications":[]
+    }
+    ]
+}
