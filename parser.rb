@@ -1,6 +1,8 @@
 require "rubygems"
 require "json"
 require 'optparse'
+require 'oj'
+
 
 # Option to handle the command 
 options = {}
@@ -18,6 +20,9 @@ OptionParser.new do |opts|
   opts.on('-D', '--database NAME', 'Source db') { |v| options['source_db'] = v }
   opts.on('-l', '--list', 'List') { options['mode'] = "list" }
   opts.on('-s', '--source FILE', 'Set the source of file') { options['source_file'] = "run" }
+  opts.on('-w', '--write FILE', 'Write to file') { |v|
+  	options['write'] = v
+  }
 
 end.parse!
 
@@ -33,16 +38,7 @@ class Project
         @name = name
         @description = description
         @key = key
-        @adddate = Time.new
         @applications = Array.new
-    end
-
-    def to_json()
-    	puts name
-    	puts description 
-    	puts key 
-    	puts adddate
-    	puts applications.to_json()
     end
 end
 
@@ -120,7 +116,7 @@ class ProjectProfiler
 			project.applications = d['applications'].inject([]) do |app,el2|
 				is_cl = el2['type'] == "cl"
 				if is_cl
-					application = CommandLineApplication.new(el2['name'],el2['type'],el2['category'],el2['command'],el2['workingdirectory'])
+					application = CommandLineApplication.new(el2['name'],el2['type'],el2['category'],el2['command'],el2['working_dir'])
 				else 
 					application = DesktopApplication.new(el2['name'],el2['type'],el2['category'],el2['location'])
 					application.documents = el2['documents'].inject([]) do |doc,el3|
@@ -147,7 +143,14 @@ class ProjectProfiler
 					else 
 						if application.location !=nil
 							system "echo Running "+application.name
-							system "open "+application.location				
+							if application.documents.length > 0
+								application.documents.each do |doc|
+									puts "open -a #{application.location} \"#{doc.uri}\""
+									system "open -a #{application.location} \"#{doc.uri}\""
+								end
+							else
+								system "open "+application.location
+							end							
 						end
 					end
 				end
@@ -256,4 +259,12 @@ elsif options["mode"] == "end"
 	else
 		
 	end					
+end
+
+if options["write"] != nil
+	json =  Oj::dump profiler, :indent => 2
+	File.open(options["write"],"w") do |f|
+  		f.write(json)
+  		f.close
+	end
 end

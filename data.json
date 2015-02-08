@@ -1,5 +1,5 @@
 {
-  "author":"Emerson Chan Simbolon",
+  "author":"MacbookPro Chan Simbolon",
   "createdate":"10-12-2014 21:21",
   "projects":[
     {
@@ -11,7 +11,7 @@
           "name":"Chrome",
           "type":"app",
           "category":"Internet Browser",
-          "location":"/Applications/Chrome.app",
+          "location":"/Applications/Google\\ Chrome.app",
           "documents":[
             {
               "name":"Research Purpose",
@@ -22,24 +22,24 @@
           "name":"Sublime Text",
           "type":"app",
           "category":"Text Editor",
-          "location":"/Applications/Sublime Text.app",
+          "location":"/Applications/Sublime\\ Text.app",
           "documents":[
             {
               "name":"Working Directory",
-              "location":"/Users/Emerson/Projects/projectprofiler"
+              "location":"/Users/MacbookPro/project/projectprofiler"
             }
             ]
         },{
           "name":"Git Pull",
           "type":"cl",
           "command":"git pull origin develop",
-          "workingdirectory":"/Users/Emerson/Projects/projectprofiler",
+          "working_dir":"/Users/MacbookPro/project/projectprofiler",
           "command-off":null
         },{
           "name":"Apache",
           "type":"cl",
           "command":"apache start",
-          "workingdirectory":null,
+          "working_dir":null,
           "command-off":"apache stop"
         }
         ]
@@ -64,18 +64,18 @@
           "name":"Sublime Text",
           "type":"app",
           "category":"Text Editor",
-          "location":"/Applications/Sublime Text.app",
+          "location":"/Applications/Sublime\\ Text.app",
           "documents":[
             {
               "name":"Working Directory",
-              "location":"/Users/Emerson/Projects/churchub"
+              "location":"/Users/MacbookPro/Project/ChurchHub"
             }
             ]
         },{
           "name":"Git Pull",
           "type":"cl",
           "command":"git pull origin develop",
-          "workingdirectory":"/Users/Emerson/Projects/churchub",
+          "working_dir":"/Users/MacbookPro/Project/ChurchHub",
           "command-off":null
         }
         ]
@@ -88,7 +88,7 @@
           "name":"Greetings from Shire",
           "type":"cl",
           "category":null,
-          "workingdirectory":null,
+          "working_dir":null,
           "command":"say Hallo good day sir"
         }
       ]
