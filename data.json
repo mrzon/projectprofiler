@@ -1,5 +1,5 @@
 {
-  "author":"MacbookPro Chan Simbolon",
+  "author":"Emerson Chan Simbolon",
   "createdate":"10-12-2014 21:21",
   "projects":[
     {
@@ -15,7 +15,7 @@
           "documents":[
             {
               "name":"Research Purpose",
-              "location":"http://google.com"
+              "uri":"http://google.com"
             }
             ]
         },{
@@ -26,7 +26,7 @@
           "documents":[
             {
               "name":"Working Directory",
-              "location":"/Users/MacbookPro/project/projectprofiler"
+              "uri":"/Users/MacbookPro/project/projectprofiler"
             }
             ]
         },{
@@ -57,7 +57,7 @@
           "documents":[
             {
               "name":"Research Purpose",
-              "location":"http://google.com"
+              "uri":"http://google.com"
             }
             ]
         },{
@@ -68,7 +68,7 @@
           "documents":[
             {
               "name":"Working Directory",
-              "location":"/Users/MacbookPro/Project/ChurchHub"
+              "uri":"/Users/MacbookPro/Project/ChurchHub"
             }
             ]
         },{

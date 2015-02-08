@@ -19,7 +19,7 @@ OptionParser.new do |opts|
   }
   opts.on('-D', '--database NAME', 'Source db') { |v| options['source_db'] = v }
   opts.on('-l', '--list', 'List') { options['mode'] = "list" }
-  opts.on('-s', '--source FILE', 'Set the source of file') { options['source_file'] = "run" }
+  opts.on('-s', '--source FILE', 'Set the source of file') {|v| options['source_file'] = v }
   opts.on('-w', '--write FILE', 'Write to file') { |v|
   	options['write'] = v
   }
@@ -85,15 +85,8 @@ end
 # Project profiler to run the project
 class ProjectProfiler
     attr_accessor :source, :author, :projects, :createdate
-
-    def initialize(source)
-        @source = source
-        @projects = Array.new
-        initWithJson()
-    end
-
-    def initWithJson() 
-    	counter = 1
+    def readFile(source)
+		counter = 1
 		data = ""
 		begin
 		    file = File.new(source, "r")
@@ -106,7 +99,27 @@ class ProjectProfiler
 		    puts "Exception: #{err}"
 		    err
 		end
+		return data
+    end
 
+    def initialize(source)
+        @source = source
+        @projects = Array.new
+        initWithJson()
+    end
+    def getProject(key)
+		@projects.each do |project| 
+			if project.key == key	
+				found = true
+				p = project
+				return p
+			end
+		end
+		return nil;
+    end
+
+    def initWithJson() 
+    	data = readFile(source)
 	    j = JSON.parse(data)
 	    @author = j['author']
 	    @createdate = j['createdate']
@@ -120,7 +133,7 @@ class ProjectProfiler
 				else 
 					application = DesktopApplication.new(el2['name'],el2['type'],el2['category'],el2['location'])
 					application.documents = el2['documents'].inject([]) do |doc,el3|
-						doc << Document.new(el3['name'],el3['location'])
+						doc << Document.new(el3['name'],el3['uri'])
 					end
 				end
 				app << application
@@ -145,11 +158,11 @@ class ProjectProfiler
 							system "echo Running "+application.name
 							if application.documents.length > 0
 								application.documents.each do |doc|
-									puts "open -a #{application.location} \"#{doc.uri}\""
-									system "open -a #{application.location} \"#{doc.uri}\""
+									puts "open -n -a #{application.location} \"#{doc.uri}\""
+									system "open -n -a #{application.location} \"#{doc.uri}\""
 								end
 							else
-								system "open "+application.location
+								system "open -n "+application.location
 							end							
 						end
 					end
@@ -169,15 +182,8 @@ class ProjectProfiler
     end
     
     def listOfApplicationInProject(key)
-    	found = false
-    	p = nil
-		@projects.each do |project| 
-			if project.key == key	
-				found = true
-				p = project
-			end
-		end
-		if !found
+    	p = getProject(key)
+		if p == nil
 			puts "Project not found"
 		else 
 			puts p.name
@@ -205,6 +211,12 @@ class ProjectProfiler
     def addProject(project) 
     	@projects << project
     end
+
+    def addApplication(application,key) 
+    	project = getProject(key)
+    	project.applications << application
+    end
+
 
     def deleteProject(key)
     	found = false
@@ -258,6 +270,42 @@ elsif options["mode"] == "end"
 		profiler.endProject(options["project"])
 	else
 		
+	end	
+elsif options["mode"] == "add"
+	if options["add"] == "project"
+		json = profiler.readFile(options["source_file"])
+		d = Oj.load(json)
+		project =  Project.new(d['name'],d['description'],d['key']) 
+		if d['applications'] != nil
+			project.applications = d['applications'].inject([]) do |app,el2|
+				is_cl = el2['type'] == "cl"
+				if is_cl
+					application = CommandLineApplication.new(el2['name'],el2['type'],el2['category'],el2['command'],el2['working_dir'])
+				else 
+					application = DesktopApplication.new(el2['name'],el2['type'],el2['category'],el2['location'])
+					application.documents = el2['documents'].inject([]) do |doc,el3|
+						doc << Document.new(el3['name'],el3['uri'])
+					end
+				end
+				app << application
+			end			
+		end
+		profiler.addProject(project)
+	elsif options["add"] == "application"
+		json = profiler.readFile(options["source_file"])
+		el2 = Oj.load(json)
+		is_cl = el2['type'] == "cl"
+		if is_cl
+			application = CommandLineApplication.new(el2['name'],el2['type'],el2['category'],el2['command'],el2['working_dir'])
+		else 
+			application = DesktopApplication.new(el2['name'],el2['type'],el2['category'],el2['location'])
+			if el2['documents'] != nil
+				application.documents = el2['documents'].inject([]) do |doc,el3|
+					doc << Document.new(el3['name'],el3['uri'])
+				end
+			end
+		end
+		profiler.addApplication(application,options["project"])
 	end					
 end
 
