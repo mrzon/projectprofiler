@@ -1,3 +1,27 @@
+# Example use
+# Add project named churchhub
+# ruby parser.rb -a project -s churchhub.json -D output.json -w output.json
+#
+# Add application chrome to project named churchhub
+# ruby parser.rb -a application -s chrome.json -D output.json -w output.json -p churchhub
+#
+# Delete project named dodo
+# ruby parser.rb -d project -p dodo -D output.json -w output.json
+#
+# Delete application from project named dodo
+# ruby parser.rb -d application -p dodo -A "Google chrome" D output.json -w output.json 
+#
+# List all projects
+# ruby parser.rb -l 
+#
+# List project named dodo
+# ruby parser.rb -l -p dodo
+#
+#
+#
+#
+#
+
 require "rubygems"
 require "json"
 require 'optparse'
@@ -13,9 +37,15 @@ OptionParser.new do |opts|
   	options['add'] = v
   }
   opts.on('-r', '--run', 'Mode Run') { options['mode'] = "run" }
-  opts.on('-d', '--delete', 'Mode Delete') { options['mode'] = "delete" }
+  opts.on('-d', '--delete WHAT', 'Mode Delete') {|v| 
+  	options['mode'] = "delete" 
+  	options['delete'] = v
+  }
   opts.on('-p', '--project NAME', 'Project') { |v| 
   	options['project'] = v 
+  }
+  opts.on('-A', '--application NAME', 'Application') { |v| 
+  	options['application'] = v 
   }
   opts.on('-D', '--database NAME', 'Source db') { |v| options['source_db'] = v }
   opts.on('-l', '--list', 'List') { options['mode'] = "list" }
@@ -85,6 +115,9 @@ end
 # Project profiler to run the project
 class ProjectProfiler
     attr_accessor :source, :author, :projects, :createdate
+
+    # Function to readfile
+    # return string the content of the file
     def readFile(source)
 		counter = 1
 		data = ""
@@ -102,25 +135,41 @@ class ProjectProfiler
 		return data
     end
 
+    # Function to initialize the process
+    # return void
     def initialize(source)
         @source = source
         @projects = Array.new
         initWithJson()
     end
+
+    # Function to get project based on the key of the project
+    # return project instance or null if not found
     def getProject(key)
 		@projects.each do |project| 
 			if project.key == key	
-				found = true
-				p = project
-				return p
+				return project
 			end
 		end
 		return nil;
     end
 
+    # Function to get application of the project based on its name
+    # return application instance or null if not found
+    def getApplication(name,project)
+		project.applications.each do |app| 
+			if app.name == name	
+				return app
+			end
+		end
+		return nil;
+    end
+
+    # Function to init the instance creation
+    # return void
     def initWithJson() 
     	data = readFile(source)
-	    j = JSON.parse(data)
+	    j = Oj.load(data)
 	    @author = j['author']
 	    @createdate = j['createdate']
 		@projects = j['projects'].inject([]) do |o,d|
@@ -141,6 +190,9 @@ class ProjectProfiler
 			o << project
 		end
     end
+
+    # Function to run a project based on the key of the project
+    # return void
     def runProject(key) 
     	found = false
 		@projects.each do |project| 
@@ -174,6 +226,8 @@ class ProjectProfiler
 		end
     end
 
+    # Function to list all available projects
+    # return void
     def listOfProjects()
     	@projects.each do |project| 
 			listOfApplicationInProject(project.key)
@@ -181,14 +235,15 @@ class ProjectProfiler
 		end
     end
     
+    # Function to list all application in a project that based on the key of the project
+    # return void
     def listOfApplicationInProject(key)
     	p = getProject(key)
 		if p == nil
 			puts "Project not found"
 		else 
-			puts p.name
+			puts p.name << " - #" << p.key 
 			puts p.description
-			puts p.key 
 			i = 1
 			p.applications.each do |app|
 				puts "#{i}" << ". " << app.name
@@ -208,36 +263,50 @@ class ProjectProfiler
 		end
     end
 
+    # Function to add project to the database
+    # return void
     def addProject(project) 
     	@projects << project
     end
 
+    # Function to add application to a project that based on the key of the project
+    # return void
     def addApplication(application,key) 
     	project = getProject(key)
     	project.applications << application
     end
 
-
+    # Function to project from database
+    # return void
     def deleteProject(key)
-    	found = false
-    	p = nil
-		@projects.each do |project| 
-			if project.key == key	
-				found = true
-				p = project
-			end
-		end
-		if !found
+    	project = getProject(key)
+		if project == nil
 			puts "Project not found"
 		else 
 			@projects.delete(p)
 		end
     end
 
+    # Function to delete application from a project that based on the key of the project
+    # return void
+    def deleteApplication(app,key)
+		project = getProject(key)
+		if project == nil
+			puts "Project not found"
+		else 
+			application = getApplication(app,project)
+			project.applications.delete(application)
+		end
+    end
+
+    # Function to end the specified running project
+    # return void
     def endProject(key)
     end
 
-    def endAllProject()
+    # Function to end all running project
+    # return void
+    def endAllProjects()
     end    
 end
 
@@ -250,7 +319,7 @@ if options["mode"] == "run"
 	if options["project"] != nil
 		profiler.runProject(options["project"])
 	else
-
+		puts "You must specify project with this mode"
 	end
 elsif options["mode"] == "list"
 	if options["project"] != nil
@@ -260,16 +329,16 @@ elsif options["mode"] == "list"
 	end
 
 elsif options["mode"] == "delete"
-	if options["project"] != nil
+	if options["delete"] == "project"
 		profiler.deleteProject(options["project"])
-	else
-		
+	elsif options["delete"] == "application"
+		profiler.deleteApplication(options["application"],options["project"])
 	end
 elsif options["mode"] == "end"
 	if options["project"] != nil
 		profiler.endProject(options["project"])
 	else
-		
+		profiler.endAllProjects()
 	end	
 elsif options["mode"] == "add"
 	if options["add"] == "project"
