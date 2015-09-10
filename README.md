@@ -35,7 +35,7 @@ Have lots of project that requires loading all of the program and files? Feel di
   
   `ruby parser.rb -l -p dodo`
 
-`[]` means optional.
+`[]` means optional. If no -D specified, data.json will be used as the source of data. If no -W specified, the -D will be used as the target of writing updated command. 
 
 ## Contributing
 The requirement that needed to start contributing is simple. A set of unix-like computer with ruby installed in it. 
